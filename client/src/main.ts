@@ -34,70 +34,40 @@ API Calls
 
 */
 
+const fetchWeather = async (cityName: string) => {
+  const response = await fetch('/api/weather/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ city: cityName }),
+  });
 
-const fetchWeather = async (city: string) => {
-  try {
-    const response = await fetch('/api/weather/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({city}),
-    });
-    //console.log('cityName: ', city);
-   // console.log('Response: ', response);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch weather data: ${response.statusText}`);
-    }
+  const weatherData = await response.json();
 
-    const weatherData = await response.json();
-    console.log('weatherData: ', weatherData);
+  console.log('weatherData: ', weatherData);
 
-    if (Array.isArray(weatherData) && weatherData.length > 0) {
-      renderCurrentWeather(weatherData[0]);
-      renderForecast(weatherData.slice(1));
-    } else {
-      throw new Error('Weather data is empty or in an unexpected format');
-    }
-  } catch (error) {
-    console.error('Error fetching weather data:', error);
-  }
+  renderCurrentWeather(weatherData[0]);
+  renderForecast(weatherData.slice(1));
 };
-
 
 const fetchSearchHistory = async () => {
-  try {
-    const history = await fetch('/api/weather/history', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-  },
-  
+  const history = await fetch('/api/weather/history', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
-  if (!history.ok) {
-    throw new Error(`Failed to fetch search history: ${history.status}`);
-  }
-  return await history.json();
-} catch (error) {
-  console.error('Error fetching search history:', error);
-  return [];
+  return history;
 };
-}
 
 const deleteCityFromHistory = async (id: string) => {
-  try {
- const response =  await fetch(`/api/weather/history/${id}`, {
+  await fetch(`/api/weather/history/${id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
     },
   });
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.statusText}`);
-  }
-} catch (error) {
-  console.error('Error deleting city from history:', error);
-}
 };
 
 /*
@@ -105,17 +75,10 @@ const deleteCityFromHistory = async (id: string) => {
 Render Functions
 
 */
-   
+
 const renderCurrentWeather = (currentWeather: any): void => {
-  if (!currentWeather) {
-    console.error('No current weather data available');
-    return;
-  }
-
-  const { city, date, icon, iconDescription, tempF, windSpeed, humidity } = currentWeather;
-
-  // Rest of your rendering logic
-
+  const { city, date, icon, iconDescription, tempF, windSpeed, humidity } =
+    currentWeather;
 
   // convert the following to typescript
   heading.textContent = `${city} (${date})`;
@@ -294,7 +257,6 @@ const handleSearchFormSubmit = (event: any): void => {
   }
 
   const search: string = searchInput.value.trim();
-  
   fetchWeather(search).then(() => {
     getAndRenderHistory();
   });

@@ -27,12 +27,10 @@ router.post('/', async (req: Request, res: Response) => {
 });
 
 // TODO: GET search history
-router.get('/history', async (req: Request, res: Response) => {
+router.get('/history', async (_req: Request, res: Response) => {
   try {
-    if (req.query.clear) {
     const history = await HistoryService.getHistory();
     res.status(200).json(history);
-    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });

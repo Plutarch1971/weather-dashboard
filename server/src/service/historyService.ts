@@ -1,4 +1,7 @@
 import fs from 'fs';
+import * as path from 'path';//Added my Matt after migration
+import { fileURLToPath } from 'url'//Added by Matt after migration
+
 // TODO: Define a City class with name and id properties
  class City {
     name: string;
@@ -8,7 +11,23 @@ import fs from 'fs';
       this.id = id;
     }
   }
-
+ 
+// Get the current file path and directory //Added by Matt after migration
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+ 
+  // Define the path to searchHistory.json
+  const searchHistoryPath = path.resolve(__dirname, '../../db/searchHistory.json');
+  
+  // Example of reading the file
+  fs.readFile(searchHistoryPath, 'utf8', (err, data) => {
+      if (err) {
+          console.error('Error reading searchHistory.json:', err);
+          return;
+      }
+      console.log('File data:', data);
+  });
+ //End added by Matt after migration 
 // TODO: Complete the HistoryService class
 class HistoryService {
   // TODO: Define a read method that reads from the searchHistory.json file
